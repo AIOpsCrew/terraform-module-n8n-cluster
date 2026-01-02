@@ -7,6 +7,7 @@ This Terraform module deploys n8n (workflow automation platform) to AWS Fargate 
 - **High Availability**: Multi-AZ deployment with Application Load Balancer
 - **Scalable**: ECS Fargate with configurable CPU, memory, and task count
 - **Secure**: Least privilege IAM, encrypted secrets, private subnets, SSL/TLS
+- **Always Encrypted**: HTTPS enabled by default (self-signed cert or custom domain)
 - **Serverless Database**: Aurora Serverless v2 PostgreSQL with auto-scaling
 - **Cost-Effective**: Database scales down to 0.5 ACU during low usage
 - **Optional Custom Domain**: Automatic ACM certificate creation and Route53 DNS
@@ -146,8 +147,15 @@ See [variables.tf](variables.tf) for all available variables.
 1. **Secrets**: All sensitive values are stored in AWS Secrets Manager
 2. **Network**: ECS tasks and Aurora are in private subnets with no direct internet access
 3. **IAM**: Roles follow least privilege principle
-4. **Encryption**: Aurora encryption at rest enabled, HTTPS in transit (with custom domain)
+4. **Encryption**: Aurora encryption at rest enabled, HTTPS in transit always enabled
 5. **Backups**: Aurora automated backups enabled with 7-day retention
+
+### SSL/TLS Configuration
+
+- **Without custom domain**: Uses self-signed certificate (browser warnings expected)
+- **With custom domain**: Uses trusted ACM certificate (no warnings)
+- All traffic is encrypted regardless of configuration
+- HTTP automatically redirects to HTTPS
 
 ## Cost Estimation
 

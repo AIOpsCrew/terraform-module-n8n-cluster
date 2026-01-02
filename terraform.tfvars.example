@@ -1,0 +1,48 @@
+# Environment Configuration
+environment  = "prod"
+project_name = "n8n"
+
+# Network Configuration
+# IMPORTANT: Match these availability zones to your AWS region!
+# Examples: us-east-1: [us-east-1a, us-east-1b]
+#           us-west-2: [us-west-2a, us-west-2b]
+availability_zones   = ["us-west-2a", "us-west-2b"]
+vpc_cidr            = "10.0.0.0/16"
+private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
+public_subnet_cidrs  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+# ECS/Fargate Configuration
+n8n_image      = "n8nio/n8n:latest"
+n8n_cpu        = 1024  # 1 vCPU
+n8n_memory     = 2048  # 2GB
+desired_count  = 2     # Number of tasks for high availability
+
+# n8n Configuration
+# Generate with: openssl rand -base64 32
+n8n_encryption_key      = "CHANGE_ME_GENERATE_RANDOM_STRING"
+n8n_basic_auth_active   = true
+n8n_basic_auth_user     = "admin"
+n8n_basic_auth_password = "CHANGE_ME_STRONG_PASSWORD"
+
+# Database Configuration (Aurora Serverless v2)
+db_name                    = "n8n"
+db_username                = "n8n_admin"
+db_password                = "CHANGE_ME_STRONG_PASSWORD"
+db_min_capacity            = 0.5  # Minimum ACU (scales down for cost savings)
+db_max_capacity            = 2    # Maximum ACU (scales up under load)
+db_instance_count          = 2    # 2 for Multi-AZ, 1 for single-AZ
+db_backup_retention_period = 7
+
+# Custom Domain (Optional)
+# Set to true and configure domain settings to enable HTTPS
+enable_custom_domain = false
+# domain_name         = "n8n.example.com"
+# route53_zone_id     = "Z1234567890ABC"
+# certificate_arn     = ""  # Leave empty to create new certificate
+
+# Tags
+tags = {
+  Terraform   = "true"
+  Project     = "n8n"
+  Environment = "prod"
+}
