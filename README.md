@@ -15,18 +15,16 @@ This Terraform module deploys n8n (workflow automation platform) to AWS Fargate 
 
 ## Architecture
 
-```
-Internet
-   |
-   v
-Application Load Balancer (Public Subnets)
-   |
-   v
-ECS Fargate Tasks (Private Subnets)
-   |
-   v
-Aurora Serverless v2 PostgreSQL (Private Subnets)
-```
+See [architecture.drawio](architecture.drawio) for a detailed diagram (open with [draw.io](https://app.diagrams.net/)).
+
+**Traffic Flow:**
+- Internet Users → Internet Gateway → Application Load Balancer → ECS Fargate Tasks → Aurora Serverless v2 PostgreSQL
+- ECS Tasks use NAT Gateways in public subnets for outbound internet access
+
+**Multi-AZ Deployment:**
+- Availability Zone A: Public subnet (NAT GW) + Private subnet (ECS) + DB subnet (Aurora instance)
+- Availability Zone B: Public subnet (NAT GW) + Private subnet (ECS) + DB subnet (Aurora instance)
+- Application Load Balancer spans both AZs for high availability
 
 ## Prerequisites
 
@@ -159,7 +157,7 @@ See [variables.tf](variables.tf) for all available variables.
 
 ## Cost Estimation
 
-Approximate monthly costs (us-east-1) - **Significantly reduced with serverless database**:
+Approximate monthly costs (us-east-1):
 - ECS Fargate (2 tasks, 1vCPU, 2GB): ~$50
 - Aurora Serverless v2 (0.5-2 ACU, 2 instances):
   - Minimum idle: ~$45/month (0.5 ACU × 2 instances)
@@ -169,7 +167,7 @@ Approximate monthly costs (us-east-1) - **Significantly reduced with serverless 
 - NAT Gateways (2): ~$70
 - Data transfer: Variable
 
-**Total: ~$160-$230/month** (vs ~$260 with traditional RDS)
+**Total: ~$160-$230/month**
 **Savings: Up to $100/month** during low-usage periods
 
 ## Maintenance
